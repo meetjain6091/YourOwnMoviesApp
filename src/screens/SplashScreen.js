@@ -1,45 +1,39 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  SafeAreaView,
-  Image,
-  StatusBar,
-} from 'react-native';
 import React, {useEffect} from 'react';
-import {myColors} from '../../utils/Theme';
+import {View, Text, StyleSheet, Image} from 'react-native';
 
-const Splash = ({navigation}) => {
+const SplashScreen = ({navigation}) => {
   useEffect(() => {
     setTimeout(() => {
       navigation.replace('Home');
-    }, 2000);
-  }, []);
+    }, 3000);
+  }, [navigation]);
+
   return (
     <View style={styles.container}>
-      <StatusBar backgroundColor={'transparent'} hidden />
       <Image
-        style={styles.logo}
-        source={{
-          uri: 'https://media.zenfs.com/en/hypebeast_936/55dd2178cbbd27b2cdba3f8985a08d48',
-        }}
+        source={{uri: 'https://via.placeholder.com/300'}}
+        style={styles.image}
       />
+      <Text style={styles.text}>Welcome to MovieApp</Text>
     </View>
   );
 };
 
-export default Splash;
-
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: myColors.primary,
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  logo: {
-    width: '70%',
-    height: 200,
+  image: {
+    width: 150,
+    height: 150,
+    marginBottom: 20,
+  },
+  text: {
+    fontSize: 20,
+    fontWeight: 'bold',
   },
 });
-``;
+
+export default SplashScreen;

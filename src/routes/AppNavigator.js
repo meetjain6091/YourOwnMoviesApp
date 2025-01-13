@@ -1,8 +1,8 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import Home from '../screens/Home/Home';
-import Splash from '../screens/Splash/Splash.js';
+import Home from '../screens/HomeScreen.js';
+import Splash from '../screens/SplashScreen.js';
 import VideoPlayer from '../screens/VideoPlayer/VideoPlayer';
 
 const Stack = createNativeStackNavigator();

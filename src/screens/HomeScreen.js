@@ -1,84 +1,86 @@
-import {ScrollView, StatusBar, StyleSheet, Text, View} from 'react-native';
 import React, {useState, useEffect} from 'react';
-import Home_Banner from '../../components/Home_Banner';
-import MovieCards from '../../components/MovieCards';
 import {
-  getNowPlayingMovies,
-  getPopularMovies,
-  getTopRatedMovies,
-} from '../../apis/Network';
+  View,
+  FlatList,
+  Text,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  TextInput,
+} from 'react-native';
+import axios from 'axios';
 
-const Home = () => {
-  const [nowPlayingData, setnowPlayingData] = useState([]);
-  const [popularMoviesData, setpopularMoviesData] = useState([]);
-  const [top_ratedData, settop_ratedData] = useState([]);
-  useEffect(() => {
-    const handleApi = async () => {
-      const {data, status} = await getNowPlayingMovies();
-      if (status === 200) {
-        setnowPlayingData(data.results);
-      } else {
-        Alert.alert(`Request failed with ${data}`);
-      }
-    };
-    handleApi();
-  }, []);
+const HomeScreen = ({navigation}) => {
+  const [movies, setMovies] = useState([]);
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
-    const handleApi = async () => {
-      const {data, status} = await getPopularMovies();
-      if (status === 200) {
-        setpopularMoviesData(data.results);
-      } else {
-        Alert.alert(`Request failed with ${data}`);
-      }
-    };
-    handleApi();
+    axios.get('https://api.tvmaze.com/search/shows?q=all').then(response => {
+      setMovies(response.data);
+    });
   }, []);
-  useEffect(() => {
-    const handleApi = async () => {
-      const {data, status} = await getTopRatedMovies();
-      if (status === 200) {
-        settop_ratedData(data.results);
-      } else {
-        Alert.alert(`Request failed with ${data}`);
-      }
-    };
-    handleApi();
-  }, []);
+
+  const renderMovie = ({item}) => (
+    <TouchableOpacity
+      style={styles.movieContainer}
+      onPress={() => navigation.navigate('Details', {movie: item.show})}>
+      <Image source={{uri: item.show.image?.medium}} style={styles.thumbnail} />
+      <View>
+        <Text style={styles.title}>{item.show.name}</Text>
+        <Text style={styles.summary} numberOfLines={3}>
+          {item.show.summary?.replace(/<\/?[^>]+(>|$)/g, '')}
+        </Text>
+      </View>
+    </TouchableOpacity>
+  );
 
   return (
     <View style={styles.container}>
-      <StatusBar
-        barStyle={'default'}
-        translucent
-        backgroundColor={'transparent'}
+      <TextInput
+        placeholder="Search Movies"
+        style={styles.searchBar}
+        value={search}
+        onFocus={() => navigation.navigate('Search')}
       />
-      <ScrollView style={styles.scrollView}>
-        <Home_Banner />
-        <View style={styles.subContainer}>
-          <MovieCards title="Now Playing" data={nowPlayingData} />
-          <MovieCards title="Popular Movies" data={popularMoviesData} />
-          <MovieCards title="Top Rated Movies" data={top_ratedData} />
-        </View>
-      </ScrollView>
+      <FlatList
+        data={movies}
+        keyExtractor={item => item.show.id.toString()}
+        renderItem={renderMovie}
+      />
     </View>
   );
 };
 
-export default Home;
-
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#000',
     flex: 1,
+    padding: 10,
   },
-  scrollView: {
-    flex: 1,
+  searchBar: {
+    height: 40,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    marginBottom: 10,
+    paddingHorizontal: 8,
   },
-  subContainer: {
-    paddingHorizontal: 15,
-    gap: 10,
-    marginTop: 20,
+  movieContainer: {
+    flexDirection: 'row',
+    marginBottom: 15,
+  },
+  thumbnail: {
+    width: 80,
+    height: 120,
+    marginRight: 10,
+  },
+  title: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  summary: {
+    fontSize: 14,
+    color: '#555',
   },
 });
+
+export default HomeScreen;
