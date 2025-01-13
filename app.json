@@ -1,4 +1,5 @@
 {
   "name": "Netflix",
-  "displayName": "Netflix"
+  "displayName": "Netflix",
+  "orientation" : "default"
 }
